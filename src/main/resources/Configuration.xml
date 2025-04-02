@@ -7,8 +7,8 @@
     <properties resource="db.properties" />
 
     <typeAliases>   <!-- 별명 사용 -->
-        <typeAlias type="pack.business.SangpumDto" alias="dto" />
-        <typeAlias type="pack.business.SangpumBean" alias="fbean"/>
+        <typeAlias type="pack.business.DataDto" alias="dto" />
+        <typeAlias type="pack.business.DataFormBean" alias="fbean"/>
     </typeAliases>
 
     <environments default="dev">

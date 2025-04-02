@@ -4,28 +4,30 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="dev">
-    <!-- select의 결과를 DataDto type으로 list 컬렉션에 저장 후 반환 -->
-    <select id="selectDataAll" resultType="pack.business.SangpumDto">
-        select * from sangdata order by code asc
+    <select id="selectDataAll" resultType="dto">
+        select * from membertab
     </select>
 
-    <select id="selectDataByCode" parameterType="string" resultType="pack.business.SangpumDto">
-        select code, sang, su, dan from sangdata
-        where code=#{code}
+    <!-- 재사용 구문 별도 작성 -->
+    <sql id="my1">id, name, passwd, regdate</sql>
+    <sql id="my2">from membertab where id=#{id}</sql>
+
+    <select id="selectDataPart" parameterType="string" resultType="dto" statementType="PREPARED">
+        select
+        <include refid="my1"/>
+        <include refid="my2"/>
     </select>
 
-    <!-- 사실 기능적으로는 formbean으로 작성해야 한다. -->
-    <insert id="insertData" parameterType="pack.business.SangpumBean"> <!-- bean ==> pack.DataBean -->
-        insert into sangdata(code, sang, su, dan)
-        values(#{code}, #{sang}, #{su}, #{dan})
+    <insert id="insertData" parameterType="fbean"> <!-- bean ==> pack.DataBean -->
+        insert into membertab values(#{id}, #{name}, #{passwd}, now())
     </insert>
 
-    <update id="updateData" parameterType="pack.business.SangpumBean">
-        update sangdata set sang=#{sang}, su=#{su}, dan=#{dan}
-        where code=#{code}
+    <update id="updateData" parameterType="fbean">
+        update membertab set name=#{name}
+        where id=#{id}
     </update>
 
-    <delete id="deleteData" parameterType="int">
-        delete from sangdata where code=#{code}
+    <delete id="deleteData" parameterType="string">
+        delete <include refid="my2"/>
     </delete>
 </mapper>
