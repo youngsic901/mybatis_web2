@@ -23,4 +23,26 @@ public class SqlMapConfig {
     public static SqlSessionFactory getSqlSession(){
         return sqlSessionFactory;
     }
+
+    // 종료 메서드 추가
+    public static void shutdown() {
+        try {
+            // 내부 커넥션 풀 사용 시 아래처럼 다운캐스팅 후 종료
+            if (sqlSessionFactory != null) {
+                javax.sql.DataSource ds = sqlSessionFactory.getConfiguration().getEnvironment().getDataSource();
+                if (ds instanceof org.apache.ibatis.datasource.pooled.PooledDataSource) {
+                    ((org.apache.ibatis.datasource.pooled.PooledDataSource) ds).forceCloseAll();
+                    System.out.println("MyBatis 커넥션 풀 종료 완료");
+                }
+                // 만약 HikariCP 사용 시
+                /*
+                if (ds instanceof com.zaxxer.hikari.HikariDataSource) {
+                    ((HikariDataSource) ds).close();
+                }
+                */
+            }
+        } catch (Exception e) {
+            System.out.println("MyBatis 종료 중 오류 : " + e);
+        }
+    }
 }
